@@ -1,0 +1,6 @@
+{
+  "name": "BioGenetik - Interaktiver Web-Lernzettel",
+  "description": "Umfassender interaktiver Lernzettel für die Biologie-Leistungskontrolle mit Mendel-Kreuzungsrechner, DNA-Mutationsstudio, Stammbaumanalyse, Krankheits-Steckbriefen und Klausur-Quiz.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
