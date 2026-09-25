@@ -1,21 +1,1584 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="de">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>BioGenetik - Interaktiver Web-Lernzettel</title>
-    <meta name="description" content="Umfassender interaktiver Lernzettel für die Biologie-Leistungskontrolle mit Mendel-Kreuzungsrechner, DNA-Mutationsstudio, Stammbaumanalyse, Krankheits-Steckbriefen und Klausur-Quiz." />
-    <meta property="og:title" content="BioGenetik - Interaktiver Web-Lernzettel" />
-    <meta property="og:description" content="Umfassender interaktiver Lernzettel für die Biologie-Leistungskontrolle mit Mendel-Kreuzungsrechner, DNA-Mutationsstudio, Stammbaumanalyse, Krankheits-Steckbriefen und Klausur-Quiz." />
-    <meta property="og:type" content="website" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-  </head>
-  <body class="bg-slate-50 text-slate-900 font-sans antialiased selection:bg-teal-100 selection:text-teal-900 min-h-screen">
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
-</html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BioGenetik - Interaktiver Web-Lernzettel</title>
+  <meta name="description" content="Vollständiger, interaktiver Lernzettel für die Biologie-Leistungskontrolle: Mendelsche Gesetze, DNA-Mutationen, Stammbaumanalyse, Erbkrankheiten und Klausur-Trainer." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --primary: #0f766e;
+      --primary-dark: #115e59;
+      --primary-light: #ccfbf1;
+      --slate-50: #f8fafc;
+      --slate-100: #f1f5f9;
+      --slate-200: #e2e8f0;
+      --slate-300: #cbd5e1;
+      --slate-400: #94a3b8;
+      --slate-500: #64748b;
+      --slate-600: #475569;
+      --slate-700: #334155;
+      --slate-800: #1e293b;
+      --slate-900: #0f172a;
+      --rose-50: #fff1f2;
+      --rose-100: #ffe4e6;
+      --rose-600: #e11d48;
+      --rose-700: #be123c;
+      --emerald-50: #ecfdf5;
+      --emerald-600: #059669;
+      --emerald-700: #047857;
+      --amber-50: #fffbeb;
+      --amber-600: #d97706;
+    }
 
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--slate-50);
+      color: var(--slate-900);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Layout */
+    .max-w-7xl { max-width: 80rem; margin-left: auto; margin-right: auto; }
+    .px-4 { padding-left: 1rem; padding-right: 1rem; }
+    @media (min-width: 640px) { .px-4 { padding-left: 1.5rem; padding-right: 1.5rem; } }
+
+    /* Header */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background-color: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--slate-200);
+    }
+    .header-inner {
+      height: 4rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--slate-900);
+      letter-spacing: -0.025em;
+    }
+    .brand-badge {
+      width: 2rem;
+      height: 2rem;
+      border-radius: 0.5rem;
+      background: var(--primary);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    nav.desktop-nav {
+      display: none;
+      align-items: center;
+      gap: 0.25rem;
+    }
+    @media (min-width: 1024px) { nav.desktop-nav { display: flex; } }
+
+    .nav-btn {
+      padding: 0.5rem 0.85rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border-radius: 0.5rem;
+      border: none;
+      background: transparent;
+      color: var(--slate-600);
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .nav-btn:hover { background: var(--slate-100); color: var(--slate-900); }
+    .nav-btn.active { background: var(--primary-light); color: var(--primary-dark); font-weight: 700; }
+
+    .header-actions { display: flex; align-items: center; gap: 0.5rem; }
+    .btn-word {
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      padding: 0.5rem 0.85rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+      transition: background 0.15s;
+    }
+    .btn-word:hover { background: var(--primary-dark); }
+    .btn-print {
+      background: var(--slate-100);
+      color: var(--slate-700);
+      border: 1px solid var(--slate-200);
+      border-radius: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-print:hover { background: var(--slate-200); }
+
+    /* Mobile subnav */
+    .mobile-subnav {
+      display: flex;
+      overflow-x: auto;
+      padding: 0.35rem 0.75rem;
+      background: white;
+      border-bottom: 1px solid var(--slate-200);
+      gap: 0.25rem;
+      scrollbar-width: none;
+    }
+    .mobile-subnav::-webkit-scrollbar { display: none; }
+    @media (min-width: 1024px) { .mobile-subnav { display: none; } }
+    .mobile-nav-btn {
+      padding: 0.35rem 0.65rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border-radius: 0.375rem;
+      white-space: nowrap;
+      border: none;
+      background: transparent;
+      color: var(--slate-600);
+      cursor: pointer;
+    }
+    .mobile-nav-btn.active { background: var(--primary); color: white; }
+
+    /* Hero Banner */
+    .hero-card {
+      background: linear-gradient(135deg, #115e59 0%, #0f766e 50%, #0f172a 100%);
+      color: white;
+      border-radius: 1rem;
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+    }
+    @media (min-width: 640px) { .hero-card { padding: 2rem; } }
+    .hero-tag {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.75rem;
+      color: #99f6e4;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    .hero-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+    }
+    @media (min-width: 640px) { .hero-title { font-size: 2rem; } }
+    .hero-desc {
+      font-size: 0.85rem;
+      color: #ccfbf1;
+      margin-top: 0.5rem;
+      max-width: 48rem;
+      line-height: 1.6;
+    }
+    .hero-buttons {
+      margin-top: 1.25rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .btn-hero-primary {
+      background: #2dd4bf;
+      color: #042f2e;
+      border: none;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-hero-primary:hover { background: #5eead4; }
+    .btn-hero-secondary {
+      background: rgba(255, 255, 255, 0.12);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-hero-secondary:hover { background: rgba(255, 255, 255, 0.2); }
+
+    /* Section structure */
+    .section-header {
+      border-bottom: 1px solid var(--slate-200);
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--slate-900);
+      letter-spacing: -0.02em;
+    }
+    .section-subtitle {
+      font-size: 0.75rem;
+      color: var(--slate-500);
+      margin-top: 0.25rem;
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    /* Common Card */
+    .card {
+      background: white;
+      border: 1px solid var(--slate-200);
+      border-radius: 0.75rem;
+      padding: 1.25rem;
+      margin-bottom: 1.25rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    }
+    @media (min-width: 640px) { .card { padding: 1.5rem; } }
+
+    /* Tab switcher */
+    .tab-deck {
+      display: flex;
+      background: var(--slate-100);
+      padding: 0.25rem;
+      border-radius: 0.5rem;
+      gap: 0.25rem;
+      margin-bottom: 1.25rem;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .tab-pill {
+      flex: 1;
+      text-align: center;
+      padding: 0.4rem 0.75rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border-radius: 0.375rem;
+      border: none;
+      background: transparent;
+      color: var(--slate-600);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s;
+    }
+    .tab-pill.active {
+      background: white;
+      color: var(--slate-900);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+      font-weight: 700;
+    }
+
+    /* Search & Filter deck */
+    .control-deck {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+    @media (min-width: 640px) {
+      .control-deck { flex-direction: row; align-items: center; justify-content: space-between; }
+    }
+    .search-input {
+      width: 100%;
+      padding: 0.5rem 1rem;
+      font-size: 0.85rem;
+      background: white;
+      border: 1px solid var(--slate-200);
+      border-radius: 0.5rem;
+      outline: none;
+    }
+    .search-input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px var(--primary-light); }
+
+    /* Tables */
+    .table-container {
+      overflow-x: auto;
+      border: 1px solid var(--slate-200);
+      border-radius: 0.5rem;
+      background: white;
+    }
+    table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem; }
+    th {
+      background: var(--slate-50);
+      padding: 0.75rem 1rem;
+      font-weight: 700;
+      color: var(--slate-700);
+      border-bottom: 1px solid var(--slate-200);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    td {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--slate-100);
+      vertical-align: top;
+      color: var(--slate-700);
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(248, 250, 252, 0.8); }
+
+    /* Badges */
+    .badge {
+      display: inline-block;
+      padding: 0.2rem 0.5rem;
+      font-size: 0.7rem;
+      font-weight: 700;
+      border-radius: 0.375rem;
+      background: var(--slate-100);
+      color: var(--slate-700);
+    }
+    .badge-primary { background: var(--primary-light); color: var(--primary-dark); }
+    .badge-rose { background: var(--rose-100); color: var(--rose-700); }
+    .badge-emerald { background: var(--emerald-50); color: var(--emerald-700); }
+
+    /* Punnett Square */
+    .punnett-table {
+      margin: 0 auto;
+      border-collapse: collapse;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+    }
+    .punnett-table th, .punnett-table td {
+      border: 1px solid var(--slate-200);
+      padding: 0.65rem 0.85rem;
+      text-align: center;
+    }
+    .cell-9 { background: #fef3c7; color: #78350f; font-weight: 700; }
+    .cell-3-green { background: #dcfce7; color: #14532d; font-weight: 700; }
+    .cell-3-yellow { background: #ffedd5; color: #7c2d12; font-weight: 700; }
+    .cell-1 { background: #f1f5f9; color: #1e293b; font-weight: 700; }
+
+    /* Flashcard */
+    .flashcard {
+      background: white;
+      border: 2px solid var(--slate-200);
+      border-radius: 1rem;
+      padding: 2.5rem 1.5rem;
+      min-height: 18rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s;
+    }
+    .flashcard:hover { border-color: var(--primary); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+
+    /* Accordions */
+    .accordion-item {
+      background: white;
+      border: 1px solid var(--slate-200);
+      border-radius: 0.5rem;
+      margin-bottom: 0.75rem;
+      overflow: hidden;
+    }
+    .accordion-header {
+      padding: 1rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      user-select: none;
+      background: white;
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+    .accordion-header:hover { background: var(--slate-50); }
+    .accordion-content {
+      padding: 1.25rem;
+      border-top: 1px solid var(--slate-100);
+      background: var(--slate-50);
+      font-size: 0.85rem;
+      display: none;
+    }
+    .accordion-content.open { display: block; }
+
+    /* Callout */
+    .callout {
+      padding: 1rem;
+      border-radius: 0.5rem;
+      background: var(--primary-light);
+      border-left: 4px solid var(--primary);
+      color: #0f172a;
+      font-size: 0.85rem;
+      margin: 1rem 0;
+    }
+
+    /* Print styles */
+    @media print {
+      header, .mobile-subnav, .hero-buttons, .tab-deck, .control-deck, .no-print {
+        display: none !important;
+      }
+      body { background: white; color: black; }
+      .card, .table-container, .accordion-content {
+        box-shadow: none !important;
+        border: 1px solid #ccc !important;
+        display: block !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Header -->
+  <header>
+    <div class="max-w-7xl px-4 header-inner">
+      <a href="#top" class="brand" onclick="switchView('lexikon')">
+        <div class="brand-badge">BG</div>
+        <span>BioGenetik</span>
+      </a>
+
+      <nav class="desktop-nav">
+        <button class="nav-btn active" id="d-nav-lexikon" onclick="switchView('lexikon')">Fachbegriffe</button>
+        <button class="nav-btn" id="d-nav-mendel" onclick="switchView('mendel')">Mendel-Labor</button>
+        <button class="nav-btn" id="d-nav-mutationen" onclick="switchView('mutationen')">Mutationen</button>
+        <button class="nav-btn" id="d-nav-stammbaum" onclick="switchView('stammbaum')">Stammbäume</button>
+        <button class="nav-btn" id="d-nav-stationen" onclick="switchView('stationen')">Erbkrankheiten</button>
+        <button class="nav-btn" id="d-nav-trainer" onclick="switchView('trainer')">Klausur-Trainer</button>
+      </nav>
+
+      <div class="header-actions">
+        <button class="btn-print no-print" onclick="window.print()" title="Drucken">🖨️ Drucken</button>
+        <button class="btn-word no-print" onclick="exportWordDocument()" title="Als Word-Datei speichern">📄 Word-Export</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Sub-Navigation -->
+  <div class="mobile-subnav no-print">
+    <button class="mobile-nav-btn active" id="m-nav-lexikon" onclick="switchView('lexikon')">Fachbegriffe</button>
+    <button class="mobile-nav-btn" id="m-nav-mendel" onclick="switchView('mendel')">Mendel-Labor</button>
+    <button class="mobile-nav-btn" id="m-nav-mutationen" onclick="switchView('mutationen')">Mutationen</button>
+    <button class="mobile-nav-btn" id="m-nav-stammbaum" onclick="switchView('stammbaum')">Stammbäume</button>
+    <button class="mobile-nav-btn" id="m-nav-stationen" onclick="switchView('stationen')">Erbkrankheiten</button>
+    <button class="mobile-nav-btn" id="m-nav-trainer" onclick="switchView('trainer')">Klausur-Trainer</button>
+  </div>
+
+  <main class="max-w-7xl px-4" style="padding-bottom: 4rem;">
+
+    <!-- Hero Card -->
+    <div class="hero-card no-print">
+      <div class="hero-tag">
+        <span>● Biologie Leistungskontrolle</span>
+        <span>&middot;</span>
+        <span>Vollständig &amp; Fachlich Exakt</span>
+      </div>
+      <h1 class="hero-title">Klassische &amp; Molekulare Genetik</h1>
+      <p class="hero-desc">
+        Interaktiver All-in-One Lernzettel für deine Biologie-Klausur: 25 Fachbegriffe, Mendel-Kreuzungsrechner (9:3:3:1 &amp; 1:1:1:1), interaktives Mutationsstudio, 2-Schritte-Stammbaumanalyse und vollständige Krankheits-Dossiers.
+      </p>
+      <div class="hero-buttons">
+        <button class="btn-hero-primary" onclick="switchView('trainer')">🎯 Klausurtrainer starten</button>
+        <button class="btn-hero-secondary" onclick="exportWordDocument()">📥 Word-Dokument (.doc) laden</button>
+      </div>
+    </div>
+
+    <!-- VIEW 1: FACHBEGRIFFE -->
+    <div id="view-lexikon" class="view-panel">
+      <div class="section-header">
+        <h2 class="section-title">Fachbegriffe &amp; Genetisches Glossar</h2>
+        <div class="section-subtitle">
+          <span>25 prüfungsrelevante Definitionen</span>
+          <span>&middot;</span>
+          <span>Klausur-Tipps</span>
+          <span>&middot;</span>
+          <span>Karteikarten-Modus</span>
+        </div>
+      </div>
+
+      <div class="card no-print">
+        <div class="control-deck">
+          <input type="text" id="glossarSearch" class="search-input" placeholder="🔍 Begriff suchen (z. B. Allel, heterozygot, Konduktorin, Phänotyp)..." onkeyup="filterGlossary()">
+          
+          <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+            <button class="tab-pill active" id="mode-table" onclick="setGlossaryMode('table')">📋 Tabelle</button>
+            <button class="tab-pill" id="mode-cards" onclick="setGlossaryMode('cards')">🗂️ Karteikarten</button>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 0.35rem; overflow-x: auto; padding-bottom: 0.25rem;" id="category-pills">
+          <button class="badge badge-primary" onclick="filterCategory('Alle')">Alle</button>
+          <button class="badge" onclick="filterCategory('Grundlagen')">Grundlagen</button>
+          <button class="badge" onclick="filterCategory('Zellgenetik')">Zellgenetik</button>
+          <button class="badge" onclick="filterCategory('Vererbung')">Vererbung</button>
+          <button class="badge" onclick="filterCategory('Genexpression')">Genexpression</button>
+        </div>
+      </div>
+
+      <!-- Table Container -->
+      <div id="glossary-table-container" class="table-container">
+        <table id="glossaryTable">
+          <thead>
+            <tr>
+              <th style="width: 25%;">Fachbegriff</th>
+              <th style="width: 15%;">Kategorie</th>
+              <th>Definition &amp; Prüfungsrelevanz</th>
+            </tr>
+          </thead>
+          <tbody id="glossaryBody">
+            <!-- Populated by JS -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Flashcard Deck Container -->
+      <div id="glossary-cards-container" style="display: none; max-width: 36rem; margin: 0 auto;">
+        <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--slate-500); margin-bottom: 0.5rem;">
+          <span id="card-counter">Karte 1 von 25</span>
+          <span id="card-mastered-count">Gelernt: 0</span>
+        </div>
+
+        <div class="flashcard" onclick="flipCard()">
+          <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--slate-400);">
+            <span id="card-category">Grundlagen</span>
+            <span style="color: var(--primary); font-weight: 700;">🔄 Klicken zum Umdrehen</span>
+          </div>
+
+          <div id="card-content" style="text-align: center; margin: 1.5rem 0;">
+            <!-- Injected by JS -->
+          </div>
+
+          <div style="display: flex; justify-content: space-between; font-size: 0.75rem; border-top: 1px solid var(--slate-100); padding-top: 0.75rem;">
+            <span style="color: var(--slate-400);">Tipp: Leertaste zum Drehen</span>
+            <button id="card-master-btn" onclick="toggleCardMastered(event)" style="background: none; border: none; color: var(--emerald-600); font-weight: 700; cursor: pointer;">
+              ✓ Als gelernt markieren
+            </button>
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; gap: 0.5rem; margin-top: 1rem;">
+          <button class="btn-print" onclick="prevCard()">&larr; Vorherige</button>
+          <button class="btn-print" onclick="flipCard()">Aufdecken / Wenden</button>
+          <button class="btn-word" onclick="nextCard()">Nächste &rarr;</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 2: MENDEL -->
+    <div id="view-mendel" class="view-panel" style="display: none;">
+      <div class="section-header">
+        <h2 class="section-title">Mendelsche Gesetze &amp; Kreuzungs-Labor</h2>
+        <div class="section-subtitle">
+          <span>1. Uniformität</span>
+          <span>&middot;</span>
+          <span>2. Spaltung (3:1 / 1:2:1)</span>
+          <span>&middot;</span>
+          <span>3. Unabhängigkeit (9:3:3:1)</span>
+          <span>&middot;</span>
+          <span>Rückkreuzung (1:1:1:1)</span>
+        </div>
+      </div>
+
+      <!-- 3 Mendel Cards Grid -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; margin-bottom: 1.5rem;">
+        
+        <!-- Regel 1 -->
+        <div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <span class="badge badge-primary">Regel 01</span>
+            <h3 style="font-size: 1.15rem; font-weight: 800; margin: 0.5rem 0 0.25rem 0;">Uniformitätsregel</h3>
+            <p style="font-size: 0.8rem; color: var(--slate-600); line-height: 1.5;">
+              Kreuzt man zwei <strong>reinerbige (homozygote)</strong> Eltern, die sich in einem Merkmal unterscheiden, so sind alle Nachkommen der F1-Generation <strong>uniform (völlig gleich)</strong>.
+            </p>
+
+            <div style="background: var(--slate-50); border: 1px solid var(--slate-200); border-radius: 0.5rem; padding: 0.75rem; margin-top: 1rem; font-size: 0.75rem;">
+              <div style="display: flex; justify-content: space-between; font-family: var(--font-mono); font-weight: 700;">
+                <span style="color: var(--rose-700);">P: Rot (AA)</span>
+                <span>&times;</span>
+                <span style="color: var(--slate-700);">P: Weiß (aa)</span>
+              </div>
+              <div style="text-align: center; color: var(--slate-400); font-size: 0.7rem; margin: 0.25rem 0;">&darr; Gameten A und a</div>
+              <div style="background: #ffe4e6; color: #9f1239; font-weight: 700; text-align: center; padding: 0.4rem; border-radius: 0.35rem;">
+                F1: 100 % Rot (Aa) &mdash; Uniform!
+              </div>
+            </div>
+          </div>
+          <p style="font-size: 0.7rem; color: var(--slate-500); margin-top: 1rem; border-top: 1px solid var(--slate-100); padding-top: 0.5rem;">
+            <strong>Intermediär:</strong> Rot &times; Weiß ergibt in F1 100 % Rosa (RW).
+          </p>
+        </div>
+
+        <!-- Regel 2 -->
+        <div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <span class="badge badge-primary">Regel 02</span>
+            <h3 style="font-size: 1.15rem; font-weight: 800; margin: 0.5rem 0 0.25rem 0;">Spaltungsregel (F2)</h3>
+            <p style="font-size: 0.8rem; color: var(--slate-600); line-height: 1.5;">
+              Kreuzt man die Individuen der F1-Generation untereinander, spalten sich die Merkmale in der F2-Generation in <strong>festen Zahlenverhältnissen</strong> auf.
+            </p>
+
+            <div style="background: var(--slate-50); border: 1px solid var(--slate-200); border-radius: 0.5rem; padding: 0.75rem; margin-top: 1rem;">
+              <table class="punnett-table" style="width: 100%;">
+                <tr><th>\</th><th>A (50%)</th><th>a (50%)</th></tr>
+                <tr><th>A</th><td class="cell-9">AA (25%)</td><td class="cell-9">Aa (25%)</td></tr>
+                <tr><th>a</th><td class="cell-9">Aa (25%)</td><td class="cell-1">aa (25%)</td></tr>
+              </table>
+
+              <div style="display: flex; justify-content: space-between; font-size: 0.75rem; margin-top: 0.5rem; font-family: var(--font-mono); font-weight: 700;">
+                <span>Phänotyp: 3 : 1</span>
+                <span>Genotyp: 1 : 2 : 1</span>
+              </div>
+            </div>
+          </div>
+          <p style="font-size: 0.7rem; color: var(--slate-500); margin-top: 1rem; border-top: 1px solid var(--slate-100); padding-top: 0.5rem;">
+            <strong>Intermediär:</strong> Phänotyp und Genotyp spalten identisch 1 : 2 : 1 auf!
+          </p>
+        </div>
+
+        <!-- Regel 3 -->
+        <div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <span class="badge badge-primary">Regel 03</span>
+            <h3 style="font-size: 1.15rem; font-weight: 800; margin: 0.5rem 0 0.25rem 0;">Unabhängigkeitsregel</h3>
+            <p style="font-size: 0.8rem; color: var(--slate-600); line-height: 1.5;">
+              Zwei oder mehr Merkmale werden unabhängig voneinander vererbt und frei neu kombiniert (sofern sie auf verschiedenen Chromosomen liegen).
+            </p>
+
+            <div style="background: var(--slate-50); border: 1px solid var(--slate-200); border-radius: 0.5rem; padding: 0.75rem; margin-top: 1rem; font-size: 0.75rem;">
+              <div style="font-family: var(--font-mono); text-align: center; font-weight: 700; color: var(--primary);">
+                F2 Phänotyp: 9 : 3 : 3 : 1
+              </div>
+              <ul style="font-size: 0.7rem; color: var(--slate-600); margin-top: 0.5rem; padding-left: 1.25rem;">
+                <li>9/16 glatt &amp; gelb (R_G_)</li>
+                <li>3/16 glatt &amp; grün (R_gg)</li>
+                <li>3/16 runzlig &amp; gelb (rrG_)</li>
+                <li>1/16 runzlig &amp; grün (rrgg)</li>
+              </ul>
+            </div>
+          </div>
+          <p style="font-size: 0.7rem; color: var(--slate-500); margin-top: 1rem; border-top: 1px solid var(--slate-100); padding-top: 0.5rem;">
+            <strong>Klausurfalle:</strong> Testkreuzung RrGg &times; rrgg ergibt <strong>1 : 1 : 1 : 1</strong>!
+          </p>
+        </div>
+
+      </div>
+
+      <!-- Interactive Punnett Simulator -->
+      <div class="card">
+        <h3 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 0.5rem;">Interaktiver Punnett-Square Simulator</h3>
+        <p style="font-size: 0.8rem; color: var(--slate-600); margin-bottom: 1rem;">
+          Wähle ein Kreuzungsszenario aus, um das Schema zu berechnen:
+        </p>
+
+        <div class="tab-deck">
+          <button class="tab-pill active" id="btn-cross-dihybrid" onclick="selectCrossPreset('dihybrid')">F2 Dihybrid (9:3:3:1)</button>
+          <button class="tab-pill" id="btn-cross-test" onclick="selectCrossPreset('test')">Rückkreuzung (1:1:1:1)</button>
+          <button class="tab-pill" id="btn-cross-lethal" onclick="selectCrossPreset('lethal')">Letalfaktor X (2:1)</button>
+        </div>
+
+        <div id="punnett-stage" style="overflow-x: auto; padding: 1rem 0;">
+          <!-- Dynamically generated -->
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 3: MUTATIONEN -->
+    <div id="view-mutationen" class="view-panel" style="display: none;">
+      <div class="section-header">
+        <h2 class="section-title">Mutationen: Ursachen &amp; Molekulare Ebenen</h2>
+        <div class="section-subtitle">
+          <span>Genmutationen (Punkt / Raster)</span>
+          <span>&middot;</span>
+          <span>Chromosomenmutationen</span>
+          <span>&middot;</span>
+          <span>Genommutationen &amp; Nondisjunction</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="tab-deck">
+          <button class="tab-pill active" id="tab-mut-gen" onclick="setMutationTab('gen')">1. Genmutationen (Codon-Studio)</button>
+          <button class="tab-pill" id="tab-mut-chrom" onclick="setMutationTab('chrom')">2. Chromosomenmutationen</button>
+          <button class="tab-pill" id="tab-mut-genom" onclick="setMutationTab('genom')">3. Genommutationen</button>
+        </div>
+
+        <!-- SUBTAB 1: GENMUTATIONEN -->
+        <div id="subtab-mut-gen">
+          <h4 style="font-weight: 800; font-size: 1rem; margin-bottom: 0.5rem;">Interaktiver Translations-Simulator</h4>
+          <p style="font-size: 0.8rem; color: var(--slate-600); margin-bottom: 1rem;">
+            Wähle eine Mutationsform aus, um den Effekt von DNA über mRNA bis zum Protein zu sehen:
+          </p>
+
+          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;" id="gene-mut-selectors">
+            <button class="badge badge-primary" onclick="setGeneMutation('wildtyp')">Wildtyp</button>
+            <button class="badge" onclick="setGeneMutation('silent')">Stumm</button>
+            <button class="badge" onclick="setGeneMutation('missense')">Missense</button>
+            <button class="badge" onclick="setGeneMutation('nonsense')">Nonsense (Stopp!)</button>
+            <button class="badge" onclick="setGeneMutation('frameshift')">Rastermutation (Frameshift)</button>
+          </div>
+
+          <div style="background: var(--slate-900); color: white; border-radius: 0.75rem; padding: 1.25rem; font-family: var(--font-mono); font-size: 0.8rem; line-height: 1.8;">
+            <div style="color: #2dd4bf; font-weight: 700; border-bottom: 1px solid #334155; padding-bottom: 0.5rem; margin-bottom: 0.75rem;" id="mut-display-title">
+              Wildtyp (Normalzustand)
+            </div>
+            <div style="color: #94a3b8; font-size: 0.75rem;">DNA-Codogener Strang (3' &rarr; 5'):</div>
+            <div style="color: #38bdf8; font-weight: 700; letter-spacing: 0.05em;" id="mut-display-dna">
+              TAC - TTC - CTC - GAC - ACT
+            </div>
+
+            <div style="color: #94a3b8; font-size: 0.75rem; margin-top: 0.5rem;">mRNA-Transkript (5' &rarr; 3'):</div>
+            <div style="color: #4ade80; font-weight: 700; letter-spacing: 0.05em;" id="mut-display-mrna">
+              AUG - AAG - GAG - CUG - UGA
+            </div>
+
+            <div style="color: #94a3b8; font-size: 0.75rem; margin-top: 0.5rem;">Aminosäurekette (Polypeptid):</div>
+            <div style="color: #fde047; font-weight: 700;" id="mut-display-protein">
+              [Met] &mdash; [Lys] &mdash; [Glu] &mdash; [Leu] &mdash; [STOP]
+            </div>
+          </div>
+
+          <div class="callout" id="mut-display-effect" style="margin-top: 1rem;">
+            Voll funktionsfähiges Polypeptid mit korrekter Faltung und Aktivität.
+          </div>
+        </div>
+
+        <!-- SUBTAB 2: CHROMOSOMENMUTATIONEN -->
+        <div id="subtab-mut-chrom" style="display: none;">
+          <h4 style="font-weight: 800; font-size: 1rem; margin-bottom: 0.5rem;">Chromosomen-Strukturveränderungen</h4>
+          <p style="font-size: 0.8rem; color: var(--slate-600); margin-bottom: 1rem;">
+            Unterscheidung zwischen balancierten und unbalancierten Mutationen:
+          </p>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem;">
+            <div style="border: 1px solid var(--slate-200); border-radius: 0.5rem; padding: 1rem;">
+              <span class="badge badge-rose">Unbalanciert: Deletion</span>
+              <p style="font-size: 0.75rem; margin-top: 0.5rem; color: var(--slate-700);">
+                Verlust eines Chromosomenstücks. <strong>DNA-Menge nimmt ab!</strong><br>
+                <em>Beispiel:</em> Cri-du-chat-Syndrom (Deletion am kurzen Arm von Chromosom 5).
+              </p>
+            </div>
+            <div style="border: 1px solid var(--slate-200); border-radius: 0.5rem; padding: 1rem;">
+              <span class="badge badge-rose">Unbalanciert: Duplikation</span>
+              <p style="font-size: 0.75rem; margin-top: 0.5rem; color: var(--slate-700);">
+                Verdopplung eines Abschnitts durch ungleiches Crossing-over. <strong>DNA-Menge nimmt zu!</strong>
+              </p>
+            </div>
+            <div style="border: 1px solid var(--slate-200); border-radius: 0.5rem; padding: 1rem;">
+              <span class="badge badge-primary">Balanciert: Inversion</span>
+              <p style="font-size: 0.75rem; margin-top: 0.5rem; color: var(--slate-700);">
+                Bruch und Drehung eines Abschnitts um 180&deg;. <strong>DNA-Menge bleibt unverändert!</strong>
+              </p>
+            </div>
+            <div style="border: 1px solid var(--slate-200); border-radius: 0.5rem; padding: 1rem;">
+              <span class="badge badge-primary">Balanciert: Translokation</span>
+              <p style="font-size: 0.75rem; margin-top: 0.5rem; color: var(--slate-700);">
+                Stückaustausch zwischen nicht-homologen Chromosomen. <strong>DNA-Menge bleibt unverändert!</strong>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- SUBTAB 3: GENOMMUTATIONEN -->
+        <div id="subtab-mut-genom" style="display: none;">
+          <h4 style="font-weight: 800; font-size: 1rem; margin-bottom: 0.5rem;">Aneuploidie vs. Polyploidie</h4>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-top: 1rem;">
+            <div style="background: var(--slate-50); border: 1px solid var(--slate-200); border-radius: 0.5rem; padding: 1rem;">
+              <strong style="color: var(--primary);">Aneuploidie (Einzelne Chromosomen)</strong>
+              <p style="font-size: 0.75rem; color: var(--slate-600); margin-top: 0.5rem; line-height: 1.5;">
+                Entsteht durch <strong>Nondisjunction</strong> (Nicht-Trennung von Chromosomen oder Chromatiden) in der Meiose:<br>
+                &bull; <em>Trisomie (2n + 1):</em> z. B. Trisomie 21.<br>
+                &bull; <em>Monosomie (2n - 1):</em> z. B. Turner-Syndrom (45,X0).
+              </p>
+            </div>
+            <div style="background: var(--slate-50); border: 1px solid var(--slate-200); border-radius: 0.5rem; padding: 1rem;">
+              <strong style="color: var(--primary);">Polyploidie (Ganze Chromosomensätze)</strong>
+              <p style="font-size: 0.75rem; color: var(--slate-600); margin-top: 0.5rem; line-height: 1.5;">
+                Vervielfachung ganzer Sätze (3n, 4n).<br>
+                &bull; <em>Beim Menschen:</em> Letal.<br>
+                &bull; <em>In der Landwirtschaft (z. B. tetraploider Roggen 4n):</em> Gigaspflanzen-Effekt mit größeren Zellen, höherer Kälteresistenz und höherem Kornertrag!
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- VIEW 4: STAMMBÄUME -->
+    <div id="view-stammbaum" class="view-panel" style="display: none;">
+      <div class="section-header">
+        <h2 class="section-title">Stammbaumanalyse &amp; Genotyp-Detektiv</h2>
+        <div class="section-subtitle">
+          <span>Der 2-Fragen-Entscheidungsbaum</span>
+          <span>&middot;</span>
+          <span>Interaktive Stammbaum-Modelle</span>
+          <span>&middot;</span>
+          <span>Beweisführungen</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="background: white; border: 2px solid var(--primary); border-radius: 0.75rem; padding: 1.25rem;">
+          <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--primary); margin-bottom: 0.75rem;">
+            Der 2-Fragen-Entscheidungsweg für die Klausur:
+          </h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; font-size: 0.8rem;">
+            <div style="background: var(--slate-50); padding: 0.75rem; border-radius: 0.5rem;">
+              <strong>Frage 1: Autosomal oder Gonosomal (X-chromosomal)?</strong>
+              <p style="color: var(--slate-600); margin-top: 0.25rem;">
+                Sind Männer und Frauen ungefähr 50:50 betroffen? &rarr; <strong>Autosomal</strong>.<br>
+                Deutlicher Männerüberschuss? &rarr; <strong>X-chromosomal rezessiv</strong>.
+              </p>
+            </div>
+            <div style="background: var(--slate-50); padding: 0.75rem; border-radius: 0.5rem;">
+              <strong>Frage 2: Dominant oder Rezessiv?</strong>
+              <p style="color: var(--slate-600); margin-top: 0.25rem;">
+                Haben zwei <em>gesunde Eltern</em> ein <em>krankes Kind</em>? &rarr; <strong>Beweis für REZESSIV (Aa &times; Aa &rarr; aa)</strong>.<br>
+                Haben zwei <em>kranke Eltern</em> ein <em>gesundes Kind</em>? &rarr; <strong>Beweis für DOMINANT (Aa &times; Aa &rarr; aa)</strong>.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top: 1.5rem;">
+          <h4 style="font-weight: 800; margin-bottom: 0.5rem;">Interaktiver Stammbaum-Vergleich</h4>
+          <div class="tab-deck">
+            <button class="tab-pill active" id="tab-ped-ar" onclick="selectPedigreePreset('ar')">Autosomal-rezessiv (Albinismus)</button>
+            <button class="tab-pill" id="tab-ped-ad" onclick="selectPedigreePreset('ad')">Autosomal-dominant (Huntington)</button>
+            <button class="tab-pill" id="tab-ped-xr" onclick="selectPedigreePreset('xr')">X-rezessiv (Hämophilie A)</button>
+          </div>
+
+          <div id="pedigree-svg-stage" style="text-align: center; overflow-x: auto; padding: 1rem 0;">
+            <!-- SVG Pedigree injected by JS -->
+          </div>
+
+          <div id="pedigree-explanation-box" class="callout">
+            <!-- Injected by JS -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 5: ERBKRANKHEITEN -->
+    <div id="view-stationen" class="view-panel" style="display: none;">
+      <div class="section-header">
+        <h2 class="section-title">Stationsarbeit: Erbkrankheiten-Katalog</h2>
+        <div class="section-subtitle">
+          <span>Station 1 bis 6</span>
+          <span>&middot;</span>
+          <span>Genorte</span>
+          <span>&middot;</span>
+          <span>Molekulare Ursachen &amp; Symptome</span>
+        </div>
+      </div>
+
+      <div id="diseases-accordion-container">
+        <!-- Injected by JS -->
+      </div>
+    </div>
+
+    <!-- VIEW 6: KLAUSUR-TRAINER -->
+    <div id="view-trainer" class="view-panel" style="display: none;">
+      <div class="section-header">
+        <h2 class="section-title">Klausur-Prüfungstrainer &amp; Rechenaufgaben</h2>
+        <div class="section-subtitle">
+          <span>8 klausurtypische Rechen- und Denkaufgaben</span>
+          <span>&middot;</span>
+          <span>Schritt-für-Schritt Musterlösungen</span>
+        </div>
+      </div>
+
+      <div class="card no-print" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+        <span style="font-weight: 700; font-size: 0.85rem;" id="quiz-score-tracker">
+          Punktestand: 0 / 0 beantwortet
+        </span>
+        <button class="btn-print" onclick="resetQuiz()">🔄 Quiz zurücksetzen</button>
+      </div>
+
+      <div id="quiz-questions-container" style="display: flex; flex-direction: column; gap: 1.25rem;">
+        <!-- Injected by JS -->
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    // COMPLETE DATASETS
+    const GLOSSARY = [
+      { id: 'gen', term: 'Gen', cat: 'Grundlagen', def: 'Ein spezifischer Abschnitt der DNA, der die Erbinformation zur Synthese eines bestimmten Proteins oder funktionellen RNA-Moleküls codiert; grundlegende funktionelle Einheit der Vererbung.', tip: 'Ein-Gen-ein-Polypeptid-Hypothese.' },
+      { id: 'genom', term: 'Genom', cat: 'Grundlagen', def: 'Die Gesamtheit aller Erbinformationen einer Zelle oder eines Organismus (beim Menschen: 46 Chromosomen im Kern + mtDNA).', tip: 'Umfasst ca. 20.000–25.000 Gene.' },
+      { id: 'chromosom', term: 'Chromosom', cat: 'Zellgenetik', def: 'Transport- und Organisationseinheit des Erbguts aus DNA und Histon-Proteinen. Mensch: 46 Chromosomen (23 Paare: 22 Autosomenpaare, 1 Gonosomenpaar).', tip: 'Vor der Teilung: 2-Chromatid-Chromosom.' },
+      { id: 'allel', term: 'Allel', cat: 'Grundlagen', def: 'Eine von mehreren Zustandsformen bzw. Sequenzvarianten eines Gens an einem bestimmten Genort (Locus) auf homologen Chromosomen.', tip: 'Diploid: max. 2 Allele pro Genort.' },
+      { id: 'genotyp', term: 'Genotyp', cat: 'Vererbung', def: 'Die konkrete Allelkombination eines Individuums für ein bestimmtes Merkmal (z. B. AA, Aa oder aa).', tip: 'Die genetische Grundausstattung.' },
+      { id: 'phaenotyp', term: 'Phänotyp', cat: 'Vererbung', def: 'Das sichtbare, messbare und physiologische Erscheinungsbild (resultiert aus Genotyp + Umwelt).', tip: 'AA und Aa haben bei Dominanz denselben Phänotyp!' },
+      { id: 'homozygot', term: 'homozygot (reinerbig)', cat: 'Vererbung', def: 'Beide Allele eines Gens auf homologen Chromosomen sind identisch (AA oder aa).', tip: 'Schlüssel für Testkreuzungen (immer aa nutzen).' },
+      { id: 'heterozygot', term: 'heterozygot (mischerbig)', cat: 'Vererbung', def: 'Zwei unterschiedliche Allele eines Gens liegen vor (Aa).', tip: 'Bildet zwei verschiedene Keimzelltypen.' },
+      { id: 'dominant', term: 'dominant', cat: 'Vererbung', def: 'Allel, das sich phänotypisch überdeckend gegen ein anderes Allel durchsetzt (Symbol: Großbuchstabe).', tip: 'Tritt bei AA und Aa voll in Erscheinung.' },
+      { id: 'rezessiv', term: 'rezessiv', cat: 'Vererbung', def: 'Allel, das im heterozygoten Zustand überdeckt wird und sich nur homozygot (aa) phänotypisch ausprägt.', tip: 'Kranke bei rezessivem Erbgang sind immer aa.' },
+      { id: 'kodominant', term: 'kodominant', cat: 'Vererbung', def: 'Beide Allele werden bei Heterozygoten vollkommen gleichwertig nebeneinander ausgeprägt (z. B. Blutgruppe AB).', tip: 'Keine Mischform, beide Merkmale voll da!' },
+      { id: 'intermediaer', term: 'intermediär', cat: 'Vererbung', def: 'Unvollständige Dominanz: Im Phänotyp des Heterozygoten entsteht eine einheitliche Mischform (Rot x Weiß = Rosa).', tip: 'F2 spaltet 1 : 2 : 1 auf (Phänotyp = Genotyp).' },
+      { id: 'p-gen', term: 'Parentalgeneration (P)', cat: 'Vererbung', def: 'Die Elterngeneration bei Kreuzungsversuchen (bei Mendel stets reinerbig).', tip: 'Bildet nur einen einzigen Gametentyp.' },
+      { id: 'f1-gen', term: '1. Filialgeneration (F1)', cat: 'Vererbung', def: 'Erste Tochtergeneration; direkte Nachkommen der P-Generation (nach Regel 1 uniform).', tip: 'Alle Individuen phänotypisch identisch.' },
+      { id: 'f2-gen', term: '2. Filialgeneration (F2)', cat: 'Vererbung', def: 'Zweite Tochtergeneration; Nachkommen aus der Kreuzung der F1 untereinander.', tip: 'Spaltet dominant-rezessiv 3 : 1 auf.' },
+      { id: 'uniform', term: 'uniform', cat: 'Vererbung', def: 'Phänotypisch und genotypisch vollkommen einheitlich untereinander.', tip: 'Gilt nur bei reinerbigen Eltern!' },
+      { id: 'monohybrid', term: 'monohybrid', cat: 'Vererbung', def: 'Kreuzung, bei der nur ein einziges Merkmal betrachtet wird.', tip: '2x2 Punnett-Quadrat.' },
+      { id: 'dihybrid', term: 'dihybrid', cat: 'Vererbung', def: 'Kreuzung, bei der zwei unabhängige Merkmale gleichzeitig betrachtet werden.', tip: '4x4 Punnett-Quadrat (9:3:3:1).' },
+      { id: 'haploid', term: 'haploid (1n)', cat: 'Zellgenetik', def: 'Einfacher Chromosomensatz (beim Menschen n = 23 in Keimzellen).', tip: 'Entsteht durch Meiose.' },
+      { id: 'diploid', term: 'diploid (2n)', cat: 'Zellgenetik', def: 'Doppelter Chromosomensatz (beim Menschen 2n = 46 in Körperzellen).', tip: 'Liegt paarweise als Homologe vor.' },
+      { id: 'konduktorin', term: 'Konduktorin', cat: 'Vererbung', def: 'Phänotypisch gesunde Überträgerin eines rezessiven Krankheitsgens auf dem X-Chromosom (X^A X^a).', tip: 'Vererbt das Gen mit 50 % Wahrscheinlichkeit an Söhne.' },
+      { id: 'penetranz', term: 'Penetranz', cat: 'Genexpression', def: 'Statistische Wahrscheinlichkeit (in %), mit der ein bestimmter Genotyp zur Ausprägung des Phänotyps führt.', tip: 'Huntington = 100 % Penetranz.' },
+      { id: 'expressivitaet', term: 'Expressivität', cat: 'Genexpression', def: 'Das Maß bzw. die Stärke, mit der sich ein Gen im Phänotyp manifestiert.', tip: 'Marfan-Syndrom: variabel stark ausgeprägt.' },
+      { id: 'polyphaenie', term: 'Polyphänie (Pleiotropie)', cat: 'Genexpression', def: 'Ein einzelnes mutiertes Gen verursacht Veränderungen an mehreren unterschiedlichen Organen gleichzeitig.', tip: 'Bsp. Marfan-Syndrom (Augen, Herz, Skelett).' },
+      { id: 'autosomal', term: 'autosomal', cat: 'Vererbung', def: 'Vererbung über die Autosomen (Chromosomen 1–22). Männer und Frauen sind gleichermaßen betroffen.', tip: '1. Kriterium: Geschlechterverteilung 50:50.' }
+    ];
+
+    const DISEASES = [
+      {
+        id: 'huntington',
+        title: 'Station 3: Chorea Huntington (Veitstanz)',
+        inheritance: 'Autosomal-dominant',
+        chromosome: 'Chromosom 4 (kurzer Arm, 4p16.3) &bull; HTT-Gen',
+        prevalence: 'Ca. 5–10 pro 100.000 Menschen',
+        cause: 'CAG-Trinukleotid-Repeat-Expansion (> 36 Repeats) im Huntingtin-Gen führt zu verklumpenden Proteinen und Absterben von Neuronen in den Basalganglien.',
+        symptoms: 'Unwillkürliche choreatische Bewegungen, fortschreitende Demenz, Wesensveränderungen; tödlich nach ca. 15 Jahren.',
+        clues: 'Spätmanifestation (Ausbruch mit 30–60 J.). 100 % Penetranz (jeder Genträger erkrankt unausweichlich). Wiederholungsrisiko für Kinder von Heterozygoten = 50 %.'
+      },
+      {
+        id: 'haemophilie',
+        title: 'Station 4: Hämophilie A (Bluterkrankheit)',
+        inheritance: 'X-chromosomal-rezessiv',
+        chromosome: 'X-Chromosom (langer Arm, Xq28) &bull; Faktor VIII (F8-Gen)',
+        prevalence: 'Ca. 1 pro 5.000–10.000 Jungen',
+        cause: 'Mangel oder Funktionsunfähigkeit des Gerinnungsfaktors VIII. Sekundäre Blutgerinnung (Fibrinnetz) versagt.',
+        symptoms: 'Blut gerinnt stark verzögert (> 15 Min.); schwere spontane Gelenk- und Muskelblutungen mit Gelenkzerstörung.',
+        clues: 'Frauen sind fast immer gesunde Konduktorinnen (X^A X^a). Männer hemizygot (X^a Y). Berühmter Stammbaum: Queen Victoria &rarr; russische Zarenfamilie.'
+      },
+      {
+        id: 'cri-du-chat',
+        title: 'Station 1: Cri-du-chat-Syndrom (Katzenschrei-Syndrom)',
+        inheritance: 'Chromosomenmutation (Struktur)',
+        chromosome: 'Chromosom 5 (partielle Deletion 5p-)',
+        prevalence: 'Ca. 1 pro 20.000–50.000 Neugeborene',
+        cause: 'Unbalancierte Deletion am kurzen Arm von Chromosom 5. Entsteht meist de novo (spontan) bei der Keimzellbildung.',
+        symptoms: 'Klagendes, katzenartiges Schreien im Säuglingsalter (Kehlkopffehlbildung), Mikrozephalie, schwere geistige Retardierung.',
+        clues: 'Diagnose über Karyogramm; Mädchen häufiger betroffen (5 : 1).'
+      },
+      {
+        id: 'albinismus',
+        title: 'Station 2: Albinismus',
+        inheritance: 'Autosomal-rezessiv',
+        chromosome: 'Chromosom 11 &bull; Tyrosinase-Gen (TYR)',
+        prevalence: 'Ca. 1 pro 20.000 Menschen',
+        cause: 'Defekt des Enzyms Tyrosinase blockiert die Umwandlung von Tyrosin in Melanin.',
+        symptoms: 'Schneeweiße bis blonde Haare, extrem helle Haut, rötlich durchscheinende Iris, Photophobie, hohes Hautkrebsrisiko.',
+        clues: 'Klassischer Beweis: Zwei gesunde Eltern bekommen ein Kind mit Albinismus (Aa x Aa -> aa). Weitere rezessive Bsp.: PKU, Mukoviszidose.'
+      },
+      {
+        id: 'marfan',
+        title: 'Station 5: Marfan-Syndrom',
+        inheritance: 'Autosomal-dominant',
+        chromosome: 'Chromosom 15 &bull; FBN1-Gen (Fibrillin-1)',
+        prevalence: 'Ca. 1–2 pro 10.000 Menschen',
+        cause: 'Defekt im Fibrillin-1 führt zu instabilem Bindegewebe der Mikrofibrillen.',
+        symptoms: 'Hochwuchs, überlange Finger (Arachnodaktylie), Linsenluxation des Auges, lebensgefährliche Aneurysmen der Hauptschlagader (Aorta).',
+        clues: 'Musterbeispiel für Polyphänie (ein Gen steuert Auge, Skelett, Gefäße) und variable Expressivität (unterschiedliche Symptomstärke).'
+      }
+    ];
+
+    const QUIZ = [
+      {
+        id: 'q1',
+        topic: 'Erbkrankheiten',
+        q: 'Zarin Alexandra ist Konduktorin für Hämophilie A (X^A X^a), Zar Nikolaus II. ist gesund (X^A Y). Mit welcher Wahrscheinlichkeit wird ein gemeinsames Kind an der Bluterkrankheit leiden?',
+        opts: [
+          { text: '100 % aller Kinder', ok: false },
+          { text: '50 % aller Kinder', ok: false },
+          { text: '25 % bezogen auf alle Kinder (50 % bezogen auf Söhne)', ok: true },
+          { text: '0 % (nur Töchter können erkranken)', ok: false }
+        ],
+        sol: 'Gameten liefern 4 Kombinationen zu je 25 %:\n1. X^A X^A (Tochter gesund)\n2. X^A X^a (Tochter Trägerin)\n3. X^A Y (Sohn gesund)\n4. X^a Y (Sohn KRANK).\nNur der Sohn mit X^a Y ist betroffen -> 25 % aller Kinder (1 von 4).'
+      },
+      {
+        id: 'q2',
+        topic: 'Stammbäume',
+        q: 'Zwei phänotypisch gesunde Eltern bekommen ein Kind mit Albinismus. Welcher Erbgang liegt zwingend vor?',
+        opts: [
+          { text: 'Autosomal-dominant', ok: false },
+          { text: 'Autosomal-rezessiv (Eltern sind heterozygot Aa)', ok: true },
+          { text: 'X-chromosomal-dominant', ok: false },
+          { text: 'Genommutation', ok: false }
+        ],
+        sol: 'Zwei gesunde Eltern mit krankem Kind sind der UNUMSTÖSSLICHE BEWEIS für Rezessivität! Bei Dominanz müsste mindestens ein Elternteil phänotypisch erkrankt sein. Beide Eltern sind gesunde Anlageträger (Aa).'
+      },
+      {
+        id: 'q3',
+        topic: 'Mendel',
+        q: 'Eine Pflanze P (glatt, gelb) wird mit einer doppelt rezessiven Pflanze (rrgg) gekreuzt. Es entstehen ca. 700 glatt-gelb, 700 glatt-grün, 700 runzlig-gelb und 700 runzlig-grün. Welchen Genotyp hatte P?',
+        opts: [
+          { text: 'RRGG (doppelt homozygot)', ok: false },
+          { text: 'RrGg (doppelt heterozygot)', ok: true },
+          { text: 'RRGg', ok: false },
+          { text: 'rrgg', ok: false }
+        ],
+        sol: 'Das Spaltungsverhältnis ist 1 : 1 : 1 : 1 (je 25 %). Bei einer Testkreuzung mit dem doppelt rezessiven Partner (rrgg) spiegelt das Phänotypverhältnis direkt die Gameten des ersten Elternteils wider -> Genotyp RrGg!'
+      },
+      {
+        id: 'q4',
+        topic: 'Mutationen',
+        q: 'Welche Chromosomenmutation führt NICHT zu einer Veränderung der Basenanzahl (balanciert)?',
+        opts: [
+          { text: 'Deletion und Duplikation', ok: false },
+          { text: 'Inversion und reziproke Translokation', ok: true },
+          { text: 'Partielle Deletion 5p-', ok: false },
+          { text: 'Trisomie 21', ok: false }
+        ],
+        sol: 'Bei Inversion (Drehung um 180°) und balancierter Translokation bleibt die Gesamtmenge der DNA unverändert (balanciert). Bei Deletion geht DNA verloren, bei Duplikation kommt DNA hinzu.'
+      },
+      {
+        id: 'q5',
+        topic: 'Mendel',
+        q: 'Ein rezessives Allel X_a wirkt im hemizygoten Zustand (X_a Y) pränatal tödlich (Letalfaktor). Welches Geschlechterverhältnis entsteht bei einer Trägerin (X_A X_a) mit gesundem Mann (X_A Y)?',
+        opts: [
+          { text: '1 weiblich : 1 männlich', ok: false },
+          { text: '2 weiblich : 1 männlich (ca. 67 % weiblich : 33 % männlich)', ok: true },
+          { text: 'Ausschließlich männliche Nachkommen', ok: false },
+          { text: '3 weiblich : 1 männlich', ok: false }
+        ],
+        sol: 'X_A X_A (Mädchen lebt), X_A X_a (Mädchen lebt), X_A Y (Junge lebt), X_a Y (Junge stirbt im Mutterleib). Es überleben lebend 2 Mädchen und 1 Junge -> Verhältnis 2 : 1!'
+      }
+    ];
+
+    // STATE
+    let currentGlossaryCategory = 'Alle';
+    let currentCardIdx = 0;
+    let isCardFlipped = false;
+    let masteredCards = new Set();
+    let currentCross = 'dihybrid';
+    let currentMutTab = 'gen';
+    let currentGeneMut = 'wildtyp';
+    let currentPedigree = 'ar';
+    let quizAnswers = {};
+
+    // VIEW SWITCHER
+    function switchView(viewId) {
+      document.querySelectorAll('.view-panel').forEach(el => el.style.display = 'none');
+      const target = document.getElementById('view-' + viewId);
+      if (target) target.style.display = 'block';
+
+      // Update Nav Buttons
+      document.querySelectorAll('.nav-btn, .mobile-nav-btn').forEach(btn => btn.classList.remove('active'));
+      const dBtn = document.getElementById('d-nav-' + viewId);
+      const mBtn = document.getElementById('m-nav-' + viewId);
+      if (dBtn) dBtn.classList.add('active');
+      if (mBtn) mBtn.classList.add('active');
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // GLOSSARY FUNCTIONS
+    function renderGlossary() {
+      const tbody = document.getElementById('glossaryBody');
+      const search = (document.getElementById('glossarSearch').value || '').toLowerCase().trim();
+      tbody.innerHTML = '';
+
+      GLOSSARY.forEach(item => {
+        const matchesCat = currentGlossaryCategory === 'Alle' || item.cat === currentGlossaryCategory;
+        const matchesSearch = !search || item.term.toLowerCase().includes(search) || item.def.toLowerCase().includes(search) || item.tip.toLowerCase().includes(search);
+
+        if (matchesCat && matchesSearch) {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><strong>${item.term}</strong></td>
+            <td><span class="badge">${item.cat}</span></td>
+            <td>
+              <div>${item.def}</div>
+              <div style="font-size: 0.75rem; color: var(--primary); margin-top: 0.35rem;"><strong>Klausur-Tipp:</strong> ${item.tip}</div>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        }
+      });
+      updateCardUI();
+    }
+
+    function filterGlossary() { renderGlossary(); }
+
+    function filterCategory(cat) {
+      currentGlossaryCategory = cat;
+      renderGlossary();
+    }
+
+    function setGlossaryMode(mode) {
+      document.getElementById('mode-table').classList.toggle('active', mode === 'table');
+      document.getElementById('mode-cards').classList.toggle('active', mode === 'cards');
+      document.getElementById('glossary-table-container').style.display = mode === 'table' ? 'block' : 'none';
+      document.getElementById('glossary-cards-container').style.display = mode === 'cards' ? 'block' : 'none';
+      if (mode === 'cards') updateCardUI();
+    }
+
+    function updateCardUI() {
+      const item = GLOSSARY[currentCardIdx];
+      if (!item) return;
+      document.getElementById('card-counter').textContent = `Karte ${currentCardIdx + 1} von ${GLOSSARY.length}`;
+      document.getElementById('card-mastered-count').textContent = `Gelernt: ${masteredCards.size}`;
+      document.getElementById('card-category').textContent = item.cat;
+
+      const container = document.getElementById('card-content');
+      if (!isCardFlipped) {
+        container.innerHTML = `
+          <h3 style="font-size: 1.75rem; font-weight: 800; color: var(--slate-900);">${item.term}</h3>
+          <p style="font-size: 0.75rem; color: var(--slate-400); margin-top: 1rem;">Klicken oder Leertaste zum Aufdecken der Definition</p>
+        `;
+      } else {
+        container.innerHTML = `
+          <h4 style="font-size: 1.15rem; font-weight: 800; color: var(--primary); border-bottom: 1px solid var(--slate-200); padding-bottom: 0.5rem; text-align: left;">${item.term}</h4>
+          <p style="font-size: 0.85rem; color: var(--slate-800); text-align: left; margin: 0.75rem 0; line-height: 1.6;">${item.def}</p>
+          <div style="background: var(--primary-light); color: var(--primary-dark); padding: 0.5rem; border-radius: 0.35rem; font-size: 0.75rem; text-align: left;">
+            <strong>Klausurtipp:</strong> ${item.tip}
+          </div>
+        `;
+      }
+
+      const isM = masteredCards.has(item.id);
+      const mBtn = document.getElementById('card-master-btn');
+      mBtn.textContent = isM ? '✓ Bereits als gelernt markiert' : '✓ Als gelernt markieren';
+      mBtn.style.color = isM ? 'var(--emerald-700)' : 'var(--slate-500)';
+    }
+
+    function flipCard() {
+      isCardFlipped = !isCardFlipped;
+      updateCardUI();
+    }
+
+    function nextCard() {
+      isCardFlipped = false;
+      currentCardIdx = (currentCardIdx + 1) % GLOSSARY.length;
+      updateCardUI();
+    }
+
+    function prevCard() {
+      isCardFlipped = false;
+      currentCardIdx = (currentCardIdx - 1 + GLOSSARY.length) % GLOSSARY.length;
+      updateCardUI();
+    }
+
+    function toggleCardMastered(e) {
+      e.stopPropagation();
+      const id = GLOSSARY[currentCardIdx].id;
+      if (masteredCards.has(id)) masteredCards.delete(id);
+      else masteredCards.add(id);
+      updateCardUI();
+    }
+
+    // PUNNETT SIMULATOR
+    function selectCrossPreset(preset) {
+      currentCross = preset;
+      document.getElementById('btn-cross-dihybrid').classList.toggle('active', preset === 'dihybrid');
+      document.getElementById('btn-cross-test').classList.toggle('active', preset === 'test');
+      document.getElementById('btn-cross-lethal').classList.toggle('active', preset === 'lethal');
+
+      const stage = document.getElementById('punnett-stage');
+
+      if (preset === 'dihybrid') {
+        stage.innerHTML = `
+          <table class="punnett-table">
+            <tr><th>&female; \\ &male;</th><th>RG</th><th>Rg</th><th>rG</th><th>rg</th></tr>
+            <tr><th>RG</th><td class="cell-9">RRGG<br><small>glatt, gelb</small></td><td class="cell-9">RRGg<br><small>glatt, gelb</small></td><td class="cell-9">RrGG<br><small>glatt, gelb</small></td><td class="cell-9">RrGg<br><small>glatt, gelb</small></td></tr>
+            <tr><th>Rg</th><td class="cell-9">RRGg<br><small>glatt, gelb</small></td><td class="cell-3-green">RRgg<br><small>glatt, grün</small></td><td class="cell-9">RrGg<br><small>glatt, gelb</small></td><td class="cell-3-green">Rrgg<br><small>glatt, grün</small></td></tr>
+            <tr><th>rG</th><td class="cell-9">RrGG<br><small>glatt, gelb</small></td><td class="cell-9">RrGg<br><small>glatt, gelb</small></td><td class="cell-3-yellow">rrGG<br><small>runzlig, gelb</small></td><td class="cell-3-yellow">rrGg<br><small>runzlig, gelb</small></td></tr>
+            <tr><th>rg</th><td class="cell-9">RrGg<br><small>glatt, gelb</small></td><td class="cell-3-green">Rrgg<br><small>glatt, grün</small></td><td class="cell-3-yellow">rrGg<br><small>runzlig, gelb</small></td><td class="cell-1">rrgg<br><small>runzlig, grün</small></td></tr>
+          </table>
+          <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-top: 1rem; font-size: 0.8rem; font-weight: 700;">
+            <span style="color: #78350f;">■ 9 glatt-gelb (56,25%)</span>
+            <span style="color: #14532d;">■ 3 glatt-grün (18,75%)</span>
+            <span style="color: #7c2d12;">■ 3 runzlig-gelb (18,75%)</span>
+            <span style="color: #1e293b;">■ 1 runzlig-grün (6,25%)</span>
+          </div>
+        `;
+      } else if (preset === 'test') {
+        stage.innerHTML = `
+          <div style="max-width: 24rem; margin: 0 auto;">
+            <table class="punnett-table" style="width: 100%;">
+              <tr><th>RrGg \\ rrgg</th><th>rg (100 %)</th></tr>
+              <tr><th>RG (25%)</th><td class="cell-9">RrGg &mdash; 25 % glatt &amp; gelb</td></tr>
+              <tr><th>Rg (25%)</th><td class="cell-3-green">Rrgg &mdash; 25 % glatt &amp; grün</td></tr>
+              <tr><th>rG (25%)</th><td class="cell-3-yellow">rrGg &mdash; 25 % runzlig &amp; gelb</td></tr>
+              <tr><th>rg (25%)</th><td class="cell-1">rrgg &mdash; 25 % runzlig &amp; grün</td></tr>
+            </table>
+            <div class="callout" style="margin-top: 1rem; text-align: left;">
+              <strong>Beweis:</strong> Das Verhältnis 1 : 1 : 1 : 1 (je 25 %) beweist zwingend, dass die getestete Pflanze für beide Merkmale heterozygot (RrGg) war!
+            </div>
+          </div>
+        `;
+      } else if (preset === 'lethal') {
+        stage.innerHTML = `
+          <div style="max-width: 24rem; margin: 0 auto;">
+            <table class="punnett-table" style="width: 100%;">
+              <tr><th>Mutter \\ Vater</th><th>X_A (50%)</th><th>Y (50%)</th></tr>
+              <tr><th>X_A</th><td class="cell-3-green">X_A X_A<br><small>Mädchen (lebt)</small></td><td class="cell-3-green">X_A Y<br><small>Junge (lebt)</small></td></tr>
+              <tr><th>X_a</th><td class="cell-3-green">X_A X_a<br><small>Mädchen Trägerin (lebt)</small></td><td style="background: #fecdd3; color: #9f1239; font-weight: 700;"><s>X_a Y</s><br><small>Stirbt pränatal!</small></td></tr>
+            </table>
+            <div class="callout" style="margin-top: 1rem; text-align: left;">
+              <strong>Letal-Ergebnis:</strong> Es überleben 2 Mädchen und 1 Junge &rarr; Geschlechterverhältnis <strong>2 weiblich : 1 männlich</strong>!
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    // MUTATIONEN
+    function setMutationTab(tab) {
+      currentMutTab = tab;
+      document.getElementById('tab-mut-gen').classList.toggle('active', tab === 'gen');
+      document.getElementById('tab-mut-chrom').classList.toggle('active', tab === 'chrom');
+      document.getElementById('tab-mut-genom').classList.toggle('active', tab === 'genom');
+
+      document.getElementById('subtab-mut-gen').style.display = tab === 'gen' ? 'block' : 'none';
+      document.getElementById('subtab-mut-chrom').style.display = tab === 'chrom' ? 'block' : 'none';
+      document.getElementById('subtab-mut-genom').style.display = tab === 'genom' ? 'block' : 'none';
+    }
+
+    const GENE_MUTATIONS = {
+      wildtyp: {
+        title: 'Wildtyp (Normalzustand)',
+        dna: 'TAC - TTC - CTC - GAC - ACT',
+        mrna: 'AUG - AAG - GAG - CUG - UGA',
+        prot: '[Met] &mdash; [Lys] &mdash; [Glu] &mdash; [Leu] &mdash; [STOP]',
+        effect: 'Voll funktionsfähiges Polypeptid mit korrekter Faltung und Aktivität.'
+      },
+      silent: {
+        title: 'Stumme Mutation (Silent)',
+        dna: 'TAC - TTT - CTC - GAC - ACT',
+        mrna: 'AUG - AAA - GAG - CUG - UGA',
+        prot: '[Met] &mdash; [Lys] &mdash; [Glu] &mdash; [Leu] &mdash; [STOP]',
+        effect: 'Basenaustausch im 2. Codon (AAG -> AAA). Da beide für Lysin codieren (Code-Degeneration), bleibt das Protein völlig identisch.'
+      },
+      missense: {
+        title: 'Missense-Mutation (Fehlsinn)',
+        dna: 'TAC - TTC - CAC - GAC - ACT',
+        mrna: 'AUG - AAG - GUG - CUG - UGA',
+        prot: '[Met] &mdash; [Lys] &mdash; [Val!] &mdash; [Leu] &mdash; [STOP]',
+        effect: 'Basenaustausch führt zum Einbau einer anderen Aminosäure (Valin statt Glutaminsäure). Kann Raumstruktur und Funktion stören (z. B. Sichelzellanämie).'
+      },
+      nonsense: {
+        title: 'Nonsense-Mutation (Kettenabbruch)',
+        dna: 'TAC - ATC - CTC - GAC - ACT',
+        mrna: 'AUG - UAG - GAG - CUG - UGA',
+        prot: '[Met] &mdash; [STOP! Abbruch]',
+        effect: 'Ein verfrühtes Stopp-Codon (UAG) bricht die Translation sofort ab. Das Protein ist verkürzt und völlig funktionslos.'
+      },
+      frameshift: {
+        title: 'Rastermutation (Frameshift durch Deletion)',
+        dna: 'TAC - TC... (1 Base verloren)',
+        mrna: 'AUG - AGG - AGC - UGU - GA...',
+        prot: '[Met] &mdash; [Arg] &mdash; [Ser] &mdash; [Cys] &mdash; ???',
+        effect: 'Durch den Verlust von 1 Base verschiebt sich das gesamte Leseraster nach der Mutation. Vollständiger Funktionsverlust des Proteins!'
+      }
+    };
+
+    function setGeneMutation(type) {
+      currentGeneMut = type;
+      const data = GENE_MUTATIONS[type];
+      document.getElementById('mut-display-title').textContent = data.title;
+      document.getElementById('mut-display-dna').textContent = data.dna;
+      document.getElementById('mut-display-mrna').textContent = data.mrna;
+      document.getElementById('mut-display-protein').innerHTML = data.prot;
+      document.getElementById('mut-display-effect').textContent = data.effect;
+    }
+
+    // STAMMBÄUME
+    function selectPedigreePreset(preset) {
+      currentPedigree = preset;
+      document.getElementById('tab-ped-ar').classList.toggle('active', preset === 'ar');
+      document.getElementById('tab-ped-ad').classList.toggle('active', preset === 'ad');
+      document.getElementById('tab-ped-xr').classList.toggle('active', preset === 'xr');
+
+      const stage = document.getElementById('pedigree-svg-stage');
+      const exp = document.getElementById('pedigree-explanation-box');
+
+      if (preset === 'ar') {
+        stage.innerHTML = `
+          <svg width="320" height="150" viewBox="0 0 320 150">
+            <!-- Parents -->
+            <rect x="60" y="20" width="30" height="30" fill="white" stroke="#334155" stroke-width="2"/>
+            <text x="75" y="15" text-anchor="middle" font-size="11" font-weight="bold">Aa</text>
+            <line x1="90" y1="35" x2="190" y2="35" stroke="#334155" stroke-width="2"/>
+            <circle cx="205" cy="35" r="15" fill="white" stroke="#334155" stroke-width="2"/>
+            <text x="205" y="15" text-anchor="middle" font-size="11" font-weight="bold">Aa</text>
+            <!-- Children line -->
+            <line x1="140" y1="35" x2="140" y2="70" stroke="#334155" stroke-width="2"/>
+            <line x1="75" y1="70" x2="205" y2="70" stroke="#334155" stroke-width="2"/>
+            <!-- Child 1: Healthy -->
+            <line x1="75" y1="70" x2="75" y2="95" stroke="#334155" stroke-width="2"/>
+            <circle cx="75" cy="110" r="15" fill="white" stroke="#334155" stroke-width="2"/>
+            <text x="75" y="140" text-anchor="middle" font-size="11" font-weight="bold">A_</text>
+            <!-- Child 2: Sick -->
+            <line x1="205" y1="70" x2="205" y2="95" stroke="#334155" stroke-width="2"/>
+            <rect x="190" y="95" width="30" height="30" fill="#dc2626" stroke="#991b1b" stroke-width="2"/>
+            <text x="205" y="140" text-anchor="middle" font-size="11" font-weight="bold" fill="#dc2626">aa (Krank!)</text>
+          </svg>
+        `;
+        exp.innerHTML = '<strong>Beweis Autosomal-Rezessiv:</strong> Zwei phänotypisch gesunde Eltern (Aa x Aa) haben ein krankes Kind (aa). Das Allel muss rezessiv sein, da es bei den Eltern maskiert vorliegt.';
+      } else if (preset === 'ad') {
+        stage.innerHTML = `
+          <svg width="320" height="150" viewBox="0 0 320 150">
+            <!-- Parents -->
+            <rect x="60" y="20" width="30" height="30" fill="#dc2626" stroke="#991b1b" stroke-width="2"/>
+            <text x="75" y="15" text-anchor="middle" font-size="11" font-weight="bold" fill="#dc2626">Aa (Krank)</text>
+            <line x1="90" y1="35" x2="190" y2="35" stroke="#334155" stroke-width="2"/>
+            <circle cx="205" cy="35" r="15" fill="#dc2626" stroke="#991b1b" stroke-width="2"/>
+            <text x="205" y="15" text-anchor="middle" font-size="11" font-weight="bold" fill="#dc2626">Aa (Krank)</text>
+            <!-- Line -->
+            <line x1="140" y1="35" x2="140" y2="70" stroke="#334155" stroke-width="2"/>
+            <line x1="75" y1="70" x2="205" y2="70" stroke="#334155" stroke-width="2"/>
+            <!-- Child 1: Sick -->
+            <line x1="75" y1="70" x2="75" y2="95" stroke="#334155" stroke-width="2"/>
+            <rect x="60" y="95" width="30" height="30" fill="#dc2626" stroke="#991b1b" stroke-width="2"/>
+            <text x="75" y="140" text-anchor="middle" font-size="11" font-weight="bold" fill="#dc2626">A_ (Krank)</text>
+            <!-- Child 2: Healthy -->
+            <line x1="205" y1="70" x2="205" y2="95" stroke="#334155" stroke-width="2"/>
+            <circle cx="205" cy="110" r="15" fill="white" stroke="#334155" stroke-width="2"/>
+            <text x="205" y="140" text-anchor="middle" font-size="11" font-weight="bold">aa (Gesund!)</text>
+          </svg>
+        `;
+        exp.innerHTML = '<strong>Beweis Autosomal-Dominant:</strong> Zwei kranke Eltern haben ein vollkommen gesundes Kind (aa). Beide Eltern müssen heterozygot (Aa) sein. Wäre das Merkmal rezessiv, könnten zwei kranke Eltern (aa x aa) nur kranke Kinder bekommen!';
+      } else if (preset === 'xr') {
+        stage.innerHTML = `
+          <svg width="320" height="150" viewBox="0 0 320 150">
+            <!-- Parents -->
+            <rect x="60" y="20" width="30" height="30" fill="white" stroke="#334155" stroke-width="2"/>
+            <text x="75" y="15" text-anchor="middle" font-size="11" font-weight="bold">X^A Y</text>
+            <line x1="90" y1="35" x2="190" y2="35" stroke="#334155" stroke-width="2"/>
+            <circle cx="205" cy="35" r="15" fill="white" stroke="#334155" stroke-width="2"/>
+            <circle cx="205" cy="35" r="5" fill="#dc2626"/>
+            <text x="205" y="15" text-anchor="middle" font-size="11" font-weight="bold">X^A X^a</text>
+            <!-- Line -->
+            <line x1="140" y1="35" x2="140" y2="70" stroke="#334155" stroke-width="2"/>
+            <line x1="75" y1="70" x2="205" y2="70" stroke="#334155" stroke-width="2"/>
+            <!-- Child 1: Daughter healthy -->
+            <line x1="75" y1="70" x2="75" y2="95" stroke="#334155" stroke-width="2"/>
+            <circle cx="75" cy="110" r="15" fill="white" stroke="#334155" stroke-width="2"/>
+            <text x="75" y="140" text-anchor="middle" font-size="11" font-weight="bold">X^A X^-</text>
+            <!-- Child 2: Son sick -->
+            <line x1="205" y1="70" x2="205" y2="95" stroke="#334155" stroke-width="2"/>
+            <rect x="190" y="95" width="30" height="30" fill="#dc2626" stroke="#991b1b" stroke-width="2"/>
+            <text x="205" y="140" text-anchor="middle" font-size="11" font-weight="bold" fill="#dc2626">X^a Y (Bluter)</text>
+          </svg>
+        `;
+        exp.innerHTML = '<strong>Muster X-Chromosomal-Rezessiv:</strong> Fast nur Männer erkranken (X^a Y, hemizygot). Die gesunde Mutter ist Konduktorin (X^A X^a) und vererbt das defekte X-Chromosom an den Sohn.';
+      }
+    }
+
+    // ACCORDIONS
+    function renderDiseases() {
+      const cont = document.getElementById('diseases-accordion-container');
+      cont.innerHTML = '';
+
+      DISEASES.forEach((d, idx) => {
+        const item = document.createElement('div');
+        item.className = 'accordion-item';
+        item.innerHTML = `
+          <div class="accordion-header" onclick="toggleAcc('acc-${d.id}')">
+            <span>${d.title}</span>
+            <span class="badge badge-primary">${d.inheritance}</span>
+          </div>
+          <div id="acc-${d.id}" class="accordion-content ${idx === 0 ? 'open' : ''}">
+            <p><strong>Genort &amp; Häufigkeit:</strong> ${d.chromosome} &bull; ${d.prevalence}</p>
+            <p style="margin-top: 0.5rem;"><strong>Molekulare Ursache:</strong> ${d.cause}</p>
+            <p style="margin-top: 0.5rem;"><strong>Symptome:</strong> ${d.symptoms}</p>
+            <div class="callout" style="margin-top: 0.75rem;">
+              <strong>Klausurrelevanz:</strong> ${d.clues}
+            </div>
+          </div>
+        `;
+        cont.appendChild(item);
+      });
+    }
+
+    function toggleAcc(id) {
+      const el = document.getElementById(id);
+      el.classList.toggle('open');
+    }
+
+    // QUIZ TRAINER
+    function renderQuiz() {
+      const cont = document.getElementById('quiz-questions-container');
+      cont.innerHTML = '';
+
+      QUIZ.forEach((q, idx) => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <div style="font-size: 0.75rem; color: var(--primary); font-weight: 700;">Aufgabe ${idx + 1} &bull; ${q.topic}</div>
+          <h4 style="font-size: 1rem; font-weight: 800; margin: 0.35rem 0 0.75rem 0;">${q.q}</h4>
+          <div style="display: flex; flex-direction: column; gap: 0.5rem;" id="opts-${q.id}">
+            ${q.opts.map((opt, oIdx) => `
+              <button class="btn-print" style="text-align: left; padding: 0.65rem 0.85rem;" onclick="answerQuiz('${q.id}', ${oIdx})">
+                ${String.fromCharCode(65 + oIdx)}) ${opt.text}
+              </button>
+            `).join('')}
+          </div>
+          <div id="sol-${q.id}" style="display: none; margin-top: 1rem;" class="callout"></div>
+        `;
+        cont.appendChild(card);
+      });
+      updateScore();
+    }
+
+    function answerQuiz(qId, oIdx) {
+      if (quizAnswers[qId] !== undefined) return;
+      quizAnswers[qId] = oIdx;
+
+      const q = QUIZ.find(item => item.id === qId);
+      const isOk = q.opts[oIdx].ok;
+
+      const optsDiv = document.getElementById(`opts-${qId}`);
+      optsDiv.querySelectorAll('button').forEach((b, idx) => {
+        b.disabled = true;
+        if (q.opts[idx].ok) {
+          b.style.background = '#dcfce7';
+          b.style.borderColor = '#16a34a';
+          b.style.fontWeight = 'bold';
+        } else if (idx === oIdx && !isOk) {
+          b.style.background = '#fee2e2';
+          b.style.borderColor = '#dc2626';
+          b.style.fontWeight = 'bold';
+        }
+      });
+
+      const sol = document.getElementById(`sol-${qId}`);
+      sol.style.display = 'block';
+      sol.innerHTML = `
+        <strong>${isOk ? '✓ Richtig!' : '✗ Falsch!'}</strong><br>
+        <span style="white-space: pre-line; line-height: 1.6;">${q.sol}</span>
+      `;
+
+      updateScore();
+    }
+
+    function updateScore() {
+      const answered = Object.keys(quizAnswers).length;
+      let correct = 0;
+      Object.entries(quizAnswers).forEach(([qId, ansIdx]) => {
+        const q = QUIZ.find(i => i.id === qId);
+        if (q && q.opts[ansIdx].ok) correct++;
+      });
+      document.getElementById('quiz-score-tracker').textContent = `Punktestand: ${correct} / ${answered} von ${QUIZ.length} Aufgaben gelöst`;
+    }
+
+    function resetQuiz() {
+      quizAnswers = {};
+      renderQuiz();
+    }
+
+    // WORD EXPORT
+    function exportWordDocument() {
+      const rows = GLOSSARY.map(t => `
+        <tr>
+          <td style="font-weight: bold; border: 1px solid #cbd5e1; padding: 6px;">${t.term}</td>
+          <td style="border: 1px solid #cbd5e1; padding: 6px;">${t.def}<br><small style="color: #0f766e;"><strong>Tipp:</strong> ${t.tip}</small></td>
+        </tr>
+      `).join('');
+
+      const diseasesHtml = DISEASES.map(d => `
+        <div style="margin-bottom: 16px; border: 1px solid #cbd5e1; padding: 12px; border-radius: 6px;">
+          <h3 style="color: #0f766e; margin-top: 0;">${d.title}</h3>
+          <p><strong>Erbgang:</strong> ${d.inheritance} | <strong>Genort:</strong> ${d.chromosome}</p>
+          <p><strong>Ursache:</strong> ${d.cause}</p>
+          <p><strong>Symptome:</strong> ${d.symptoms}</p>
+          <p style="background: #f1f5f9; padding: 6px;"><strong>Klausurrelevanz:</strong> ${d.clues}</p>
+        </div>
+      `).join('');
+
+      const html = `
+        <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+        <head><meta charset="utf-8"><title>Biologie LK Genetik Lernskript</title>
+        <style>
+          body { font-family: Calibri, Arial, sans-serif; font-size: 11pt; line-height: 1.45; color: #0f172a; margin: 2cm; }
+          h1 { color: #0f766e; border-bottom: 2px solid #0f766e; padding-bottom: 4px; }
+          h2 { color: #115e59; margin-top: 24px; border-bottom: 1px solid #cbd5e1; padding-bottom: 3px; }
+          table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 10pt; }
+          th { background: #0f766e; color: white; padding: 6px; border: 1px solid #0f766e; text-align: left; }
+        </style>
+        </head>
+        <body>
+          <h1>Biologie-Leistungskontrolle: Genetik</h1>
+          <p>Vollständiges Prüfungsskript: Grundbegriffe &bull; Mendelsche Regeln &bull; Mutationen &bull; Stammbäume &bull; Erbkrankheiten</p>
+
+          <h2>1. Fachbegriffe &amp; Definitionen</h2>
+          <table>
+            <tr><th style="width: 25%;">Begriff</th><th>Definition &amp; Klausurtipp</th></tr>
+            ${rows}
+          </table>
+
+          <h2>2. Die 3 Mendelschen Regeln &amp; Spaltungsverhältnisse</h2>
+          <p><strong>1. Uniformitätsregel:</strong> Reinerbige Eltern &rarr; 100 % einheitliche F1 (bei Dominanz 100 % dominant; bei intermediär 100 % Mischform wie rosa Wunderblume).</p>
+          <p><strong>2. Spaltungsregel:</strong> F1 x F1 &rarr; F2 spaltet dominant-rezessiv im Verhältnis <strong>3 : 1</strong> (Phänotyp) bzw. <strong>1 : 2 : 1</strong> (Genotyp 1 AA : 2 Aa : 1 aa) auf.</p>
+          <p><strong>3. Unabhängigkeitsregel:</strong> Dihybrider Erbgang (RrGg x RrGg) liefert in der F2 das Phänotypverhältnis <strong>9 : 3 : 3 : 1</strong>.</p>
+          <p><strong>Rückkreuzung / Testkreuzung:</strong> RrGg x rrgg spaltet im Verhältnis <strong>1 : 1 : 1 : 1</strong> auf!</p>
+
+          <h2>3. Mutationen im Überblick</h2>
+          <p><strong>Genmutationen:</strong> Punktmutationen (stumm, missense, nonsense) und Rastermutationen (Insertion, Deletion).</p>
+          <p><strong>Chromosomenmutationen:</strong> Deletion und Duplikation (unbalanciert &rarr; DNA-Menge ändert sich); Inversion und Translokation (balanciert &rarr; DNA-Menge bleibt gleich!).</p>
+          <p><strong>Genommutationen:</strong> Aneuploidie (z. B. Trisomie 21) und Polyploidie (z. B. 4n tetraploider Roggen &rarr; Gigas-Effekt).</p>
+
+          <h2>4. Stammbaumanalyse</h2>
+          <p><strong>Autosomal-rezessiv:</strong> Zwei gesunde Eltern haben ein krankes Kind (Aa x Aa &rarr; aa).</p>
+          <p><strong>Autosomal-dominant:</strong> Zwei kranke Eltern haben ein gesundes Kind (Aa x Aa &rarr; aa).</p>
+          <p><strong>X-chromosomal-rezessiv:</strong> Deutlicher Männerüberschuss (X^a Y). Mütter sind gesunde Konduktorinnen (X^A X^a).</p>
+
+          <h2>5. Erbkrankheiten-Steckbriefe</h2>
+          ${diseasesHtml}
+        </body>
+        </html>
+      `;
+
+      const blob = new Blob([html], { type: 'application/msword;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'Biologie_LK_Genetik_Lernskript.doc';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    // KEYBOARD LISTENER FOR FLASHCARDS
+    window.addEventListener('keydown', (e) => {
+      const cardsVisible = document.getElementById('glossary-cards-container').style.display === 'block';
+      if (cardsVisible && (e.code === 'Space' || e.code === 'Enter')) {
+        e.preventDefault();
+        flipCard();
+      }
+    });
+
+    // INIT
+    renderGlossary();
+    selectCrossPreset('dihybrid');
+    selectPedigreePreset('ar');
+    renderDiseases();
+    renderQuiz();
+  </script>
+</body>
+</html>
